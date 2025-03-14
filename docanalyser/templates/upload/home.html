@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <style>
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .image-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Главная страница</h1>
+    <div>
+        <a href="{% url 'upload' %}"><button>Добавить картинку</button></a>
+        <a href="#"><button>Проанализировать картинку</button></a>
+    </div>
+    <hr>
+    <div class="image-grid">
+        {% for document in documents %}
+            <div class="image-item">
+                <img src="{{ document.image.url }}" alt="{{ document.title }}">
+                <p>ID: {{ document.id }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
