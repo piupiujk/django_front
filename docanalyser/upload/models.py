@@ -6,8 +6,11 @@ class Docs(models.Model):
     size = models.IntegerField()
 
 class UsersToDocs(models.Model):
-    username = models.CharField(max_length=100)
-    docs_id = models.ForeignKey(Docs, on_delete=models.CASCADE, related_name='docs_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_docs')
+    document = models.ForeignKey(Docs, on_delete=models.CASCADE, related_name='doc_users')
+
+    class Meta:
+        unique_together = ('user', 'document')
 
 class Price(models.Model):
     file_type = models.CharField(max_length=100)

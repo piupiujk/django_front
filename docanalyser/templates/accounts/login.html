@@ -1,0 +1,16 @@
+{% extends 'upload/base.html' %}
+
+{% block title %}
+Авторизация
+{% endblock %}
+
+{% block content %}
+<h1>Вход в систему</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Войти</button>
+    </form>
+    <br>
+    <a href="{% url 'home' %}"><button>На главную</button></a>
+{% endblock %}

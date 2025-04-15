@@ -1,0 +1,55 @@
+name: doc_analyser
+
+networks:
+  doc_analyser_my_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:17.0
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - django_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${HOST_PORT}:${DB_PORT}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - doc_analyser_my_network
+
+  django_front:
+    image: django_front
+    build: .
+    container_name: django_front
+    ports:
+      - "${APP_PORT}:${DOCKER_PORT}"
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+    volumes:
+      - static_volume:/django_front/static
+      - media_volume:/django_front/media
+      - .:/django_front
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    command: [ '/django_front/app.sh' ]
+    networks:
+      - doc_analyser_my_network
+
+
+volumes:
+  static_volume:
+  media_volume:
+  django_postgres_data:
+
+

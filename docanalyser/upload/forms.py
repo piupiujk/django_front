@@ -1,7 +1,14 @@
 from django import forms
-from .models import Docs
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
-class DocumentForm(forms.ModelForm):
-    class Meta:
-        model = Docs
-        fields = ['file_path', 'size']
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+
+from django import forms
+
+class DeleteDocumentForm(forms.Form):
+    document_id = forms.IntegerField(
+        label='ID документа для удаления',
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))

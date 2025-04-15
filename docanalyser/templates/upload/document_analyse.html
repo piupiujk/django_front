@@ -1,0 +1,14 @@
+{% extends 'upload/base.html' %}
+
+{% block title %}
+Анализирую...
+{% endblock %}
+
+{% block content %}
+<h1>Анализирую...</h1>
+<h6>Посмотреть результат можно, нажав на кнопку на главной странице</h6>
+<a href="{% url 'home' %}">
+    <button>На главную</button>
+</a>
+
+{% endblock %}
