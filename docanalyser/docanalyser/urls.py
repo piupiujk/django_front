@@ -7,7 +7,8 @@ from django.conf.urls.static import static
 urlpatterns = ([
     path('', include('upload.urls')),
     path('admin/', admin.site.urls),
-    path('auth/', include(('accounts.urls', 'accounts'), namespace='accounts'))
+    path('auth/', include(('accounts.urls', 'accounts'), namespace='accounts')),
+    path('metrics/', include('django_prometheus.urls')),
 ])
 
 if settings.DEBUG:

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
 
@@ -45,6 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'upload',
     'accounts',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'proxy_app',
+    'channels',
+    'django_prometheus',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +82,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'docanalyser.wsgi.application'
+# WSGI_APPLICATION = 'docanalyser.wsgi.application'
+ASGI_APPLICATION = 'docanalyser.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -90,6 +96,17 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASS"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
+    }
+}
+
+# Настройки кеширования
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -130,6 +147,31 @@ LOGGING = {
     },
 }
 
+# Настройки DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+# Настройки JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+}
+
+# Настройки прокси
+PROXY_CONFIG = {
+    'FASTAPI_URL': 'http://fastapi-service:8000',
+    'CACHE_TIMEOUT': 60 * 15,  # 15 минут
+}
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -158,3 +200,5 @@ LOGOUT_REDIRECT_URL = 'home'  # Куда перенаправлять после
 
 FASTAPI_BASE_URL = "http://document_app:8000"
 
+PROMETHEUS_METRICS_EXPORT_PORT = None  # Отключаем авто-запуск сервера
+PROMETHEUS_METRICS_EXPORT_ADDRESS = ''  # Очищаем адрес
